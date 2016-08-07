@@ -8,10 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
 
         //Explicit
         private Context context;
-        private String myUserString, myPasswordString;
+        private String myUserString, myPasswordString,
+                truePasswordString, nameString;
         private static final String urlJSON = "http://swiftcodingthai.com/6aug/get_user_master.php";
+        private boolean statusABoolean = true;
+
 
         public SynchronizeUser(Context context,
                                String myUserString,
@@ -71,6 +78,42 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
 
             Log.d("7AugV1", "JSON ==> " + s);
+
+            try {
+
+                JSONArray jsonArray = new JSONArray(s);
+                for (int i=0;i<jsonArray.length();i+=1) {
+
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    if (myUserString.equals(jsonObject.getString("User"))) {
+
+                        truePasswordString = jsonObject.getString("Password");
+                        nameString = jsonObject.getString("Name");
+                        statusABoolean = false;
+
+                    }   // if
+                }   // for
+
+                if (statusABoolean) {
+                    MyAlert myAlert = new MyAlert();
+                    myAlert.myDialog(context, 4, "ไม่มี User นี้",
+                            "ไม่มี " + myUserString + " ใน ฐานข้อมูลของเรา");
+                } else if (passwordString.equals(truePasswordString)) {
+                    //Password Ture
+                    Toast.makeText(context, "Welcome " + nameString, Toast.LENGTH_SHORT).show();
+                } else {
+                    //Password False
+                    MyAlert myAlert = new MyAlert();
+                    myAlert.myDialog(context, 4, "Password False",
+                            "Please Try Again Password False");
+
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
 
         }   // onPost
 
