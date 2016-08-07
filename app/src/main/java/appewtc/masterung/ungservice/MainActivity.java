@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         //Explicit
         private Context context;
         private String myUserString, myPasswordString,
-                truePasswordString, nameString;
+                truePasswordString, nameString, avataString;
         private static final String urlJSON = "http://swiftcodingthai.com/6aug/get_user_master.php";
         private boolean statusABoolean = true;
 
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         truePasswordString = jsonObject.getString("Password");
                         nameString = jsonObject.getString("Name");
                         statusABoolean = false;
+                        avataString = jsonObject.getString("Avata");
 
                     }   // if
                 }   // for
@@ -101,6 +102,14 @@ public class MainActivity extends AppCompatActivity {
                 } else if (passwordString.equals(truePasswordString)) {
                     //Password Ture
                     Toast.makeText(context, "Welcome " + nameString, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(MainActivity.this, ServiceActivity.class);
+                    intent.putExtra("Name", nameString);
+                    intent.putExtra("Avata", avataString);
+                    startActivity(intent);
+                    finish();
+
+
                 } else {
                     //Password False
                     MyAlert myAlert = new MyAlert();
